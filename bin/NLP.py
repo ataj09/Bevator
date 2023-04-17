@@ -8,12 +8,12 @@ class NLP:
         self.text = ""
 
     def getKeys(self, text):
-        self.text = text
-        doc = self.nlp(text)
+        self.text = text.lower()
+        doc = self.nlp(self.text)
         keywords = []
 
         for token in doc:
-            if token.pos_ in ['NOUN', 'ADJ'] and not token.is_stop:
+            if token.pos_ in ['VERB','NOUN'] and not token.is_stop:
                 keywords.append(token.text)
         print(keywords)
 
