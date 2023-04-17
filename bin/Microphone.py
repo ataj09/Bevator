@@ -8,7 +8,6 @@ import time
 import os
 
 class ResumableMicrophoneStream:
-    """Opens a recording stream as a generator yielding the audio chunks."""
 
 
     def __init__(self, rate, chunk_size):
@@ -36,9 +35,6 @@ class ResumableMicrophoneStream:
             rate=self._rate,
             input=True,
             frames_per_buffer=self.chunk_size,
-            # Run the audio stream asynchronously to fill the buffer object.
-            # This is necessary so that the input device's buffer doesn't
-            # overflow while the calling thread makes network requests, etc.
             stream_callback=self._fill_buffer,
         )
 
@@ -49,16 +45,15 @@ class ResumableMicrophoneStream:
         self._audio_stream.stop_stream()
         self._audio_stream.close()
         self.closed = True
-        # Signal the generator to terminate so that the client's
-        # streaming_recognize method will not block the process termination.
         self._buff.put(None)
         self._audio_interface.terminate()
+
     def _fill_buffer(self, in_data, *args, **kwargs):
-        """Continuously collect data from the audio stream, into the buffer."""
+
         self._buff.put(in_data)
         return None, pyaudio.paContinue
     def generator(self):
-        """Stream Audio from microphone to API and to local buffer"""
+
         while not self.closed:
             data = []
             if self.new_stream and self.last_audio_input:
@@ -78,15 +73,13 @@ class ResumableMicrophoneStream:
                     for i in range(chunks_from_ms, len(self.last_audio_input)):
                         data.append(self.last_audio_input[i])
                 self.new_stream = False
-            # Use a blocking get() to ensure there's at least one chunk of
-            # data, and stop iteration if the chunk is None, indicating the
-            # end of the audio stream.
+
             chunk = self._buff.get()
             self.audio_input.append(chunk)
             if chunk is None:
                 return
             data.append(chunk)
-            # Now consume whatever other data's still buffered.
+
             while True:
                 try:
                     chunk = self._buff.get(block=False)

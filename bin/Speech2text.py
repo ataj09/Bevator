@@ -24,28 +24,17 @@ class Speech2text:
 
     def __init__(self, nlp):
         self.nlp = nlp
-    def get_current_time(self):
-        """Return Current Time in MS."""
 
+    def get_current_time(self):
         return int(round(time.time() * 1000))
 
 
 
 
     def listen_print_loop(self,responses, stream):
-        """Iterates through server responses and prints them.
-        The responses passed is a generator that will block until a response
-        is provided by the server.
-        Each response may contain multiple results, and each result may contain
-        multiple alternatives; for details, see https://goo.gl/tjCPAU.  Here we
-        print only the transcription for the top alternative of the top result.
-        In this case, responses are provided for interim results as well. If the
-        response is an interim one, print a line feed at the end of it, to allow
-        the next result to overwrite it, until the response is a final one. For the
-        final one, print a newline to preserve the finalized transcription.
-        """
 
-        interpreter = self.nlp()
+
+        interpreter = self.nlp
         for response in responses:
 
             if self.get_current_time() - stream.start_time > STREAMING_LIMIT:
@@ -78,8 +67,6 @@ class Speech2text:
                 - stream.bridging_offset
                 + (STREAMING_LIMIT * stream.restart_counter)
             )
-            # Display interim results, but with a carriage return at the end of the
-            # line, so subsequent lines will overwrite them.
 
             if result.is_final:
 
@@ -92,8 +79,7 @@ class Speech2text:
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
 
-                # Exit recognition if any of the transcribed phrases could be
-                # one of our keywords.
+
                 if re.search(r"\b(exit|quit)\b", transcript, re.I):
                     sys.stdout.write(YELLOW)
                     sys.stdout.write("Exiting...\n")
@@ -109,7 +95,7 @@ class Speech2text:
 
 
     def Start(self):
-        """start bidirectional streaming from microphone input to speech API"""
+
 
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
         client = speech.SpeechClient()
@@ -149,7 +135,7 @@ class Speech2text:
 
                 responses = client.streaming_recognize(streaming_config, requests)
 
-                # Now, put the transcription responses to use.
+
                 self.listen_print_loop(responses, stream)
 
                 if stream.result_end_time > 0:
