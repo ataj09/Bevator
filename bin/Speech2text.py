@@ -1,14 +1,12 @@
-
+import os
 import re
 import sys
+import threading
 import time
-import os
 
 from google.cloud import speech
-from Microphone import ResumableMicrophoneStream
-from NLP import NLP as nlp
 
-import threading
+from Microphone import ResumableMicrophoneStream
 
 # Audio recording parameters
 STREAMING_LIMIT = 240000  # 4 minutes
@@ -28,11 +26,7 @@ class Speech2text:
     def get_current_time(self):
         return int(round(time.time() * 1000))
 
-
-
-
-    def listen_print_loop(self,responses, stream):
-
+    def listen_print_loop(self, responses, stream):
 
         interpreter = self.nlp
         for response in responses:
@@ -63,9 +57,9 @@ class Speech2text:
             stream.result_end_time = int((result_seconds * 1000) + (result_micros / 1000))
 
             corrected_time = (
-                stream.result_end_time
-                - stream.bridging_offset
-                + (STREAMING_LIMIT * stream.restart_counter)
+                    stream.result_end_time
+                    - stream.bridging_offset
+                    + (STREAMING_LIMIT * stream.restart_counter)
             )
 
             if result.is_final:
@@ -73,12 +67,11 @@ class Speech2text:
                 sys.stdout.write(GREEN)
                 sys.stdout.write("\033[K")
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
-                t = threading.Thread(target = interpreter.getKeys(transcript), args=(transcript,))
+                t = threading.Thread(target=interpreter.getKeys(transcript), args=(transcript,))
                 t.start()
 
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
-
 
                 if re.search(r"\b(exit|quit)\b", transcript, re.I):
                     sys.stdout.write(YELLOW)
@@ -93,9 +86,7 @@ class Speech2text:
 
                 stream.last_transcript_was_final = False
 
-
     def Start(self):
-
 
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
         client = speech.SpeechClient()
@@ -135,7 +126,6 @@ class Speech2text:
 
                 responses = client.streaming_recognize(streaming_config, requests)
 
-
                 self.listen_print_loop(responses, stream)
 
                 if stream.result_end_time > 0:
@@ -149,5 +139,3 @@ class Speech2text:
                 if not stream.last_transcript_was_final:
                     sys.stdout.write("\n")
                 stream.new_stream = True
-
-

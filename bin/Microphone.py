@@ -1,17 +1,15 @@
 STREAMING_LIMIT = 240000  # 4 minutes
 SAMPLE_RATE = 16000
 CHUNK_SIZE = int(SAMPLE_RATE / 10)  # 100ms
+import time
+
 import pyaudio
 from six.moves import queue
-import sys
-import time
-import os
+
 
 class ResumableMicrophoneStream:
 
-
     def __init__(self, rate, chunk_size):
-
 
         self._rate = rate
         self.chunk_size = chunk_size
@@ -41,6 +39,7 @@ class ResumableMicrophoneStream:
     def __enter__(self):
         self.closed = False
         return self
+
     def __exit__(self, type, value, traceback):
         self._audio_stream.stop_stream()
         self._audio_stream.close()
@@ -52,6 +51,7 @@ class ResumableMicrophoneStream:
 
         self._buff.put(in_data)
         return None, pyaudio.paContinue
+
     def generator(self):
 
         while not self.closed:

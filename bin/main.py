@@ -1,6 +1,8 @@
 import threading
-import Speech2text
+
 import NLP
+import Speech2text
+
 
 def main():
     nlp = NLP.NLP()
@@ -8,7 +10,6 @@ def main():
     s2t = Speech2text.Speech2text(nlp)
     t1 = threading.Thread(s2t.Start())
     t1.start()
-
 
 
 if __name__ == "__main__":
