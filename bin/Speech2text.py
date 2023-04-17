@@ -82,7 +82,7 @@ def listen_print_loop(responses, stream):
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
             sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
-            t = threading.Thread(target = interpreter.getKeys(transcript))
+            t = threading.Thread(target = interpreter.getKeys(transcript), args=(transcript,))
             t.start()
 
             stream.is_final_end_time = stream.result_end_time

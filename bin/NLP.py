@@ -1,3 +1,6 @@
+import spacy
+import json
+
 class NLP:
     def __init__(self):
         import spacy
@@ -12,4 +15,5 @@ class NLP:
         for token in doc:
             if token.pos_ in ['NOUN', 'ADJ'] and not token.is_stop:
                 keywords.append(token.text)
+        print(keywords)
 
