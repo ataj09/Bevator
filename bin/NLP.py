@@ -62,7 +62,7 @@ class NLP:
 
         if self.found_matches.count("yes_match") >= 1 and self.found_matches.count("no_match") < 1:
             if self.found_matches.count("welcome_match") < 1:
-                tts = gTTS(text=random.choice(self.phrases_response["pour_match"]), lang='en')
+                tts = gTTS(text=random.choice(self.phrases_response["pour_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
 
