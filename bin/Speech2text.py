@@ -33,6 +33,9 @@ class Speech2text:
 
     def listen_print_loop(self,responses, stream):
 
+        """
+        Get chunks of audio from microphone.generator and sends them to google Speech to Text
+        """
 
         interpreter = self.nlp
         for response in responses:
@@ -79,7 +82,7 @@ class Speech2text:
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
 
-
+                # Check for terminating command
                 if re.search(r"\b(exit|quit)\b", transcript, re.I):
                     sys.stdout.write(YELLOW)
                     sys.stdout.write("Exiting...\n")
@@ -96,7 +99,9 @@ class Speech2text:
 
     def Start(self):
 
-
+        """
+        Handles connection to google-cloud
+        """
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
         client = speech.SpeechClient()
         config = speech.RecognitionConfig(

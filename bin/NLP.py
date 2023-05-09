@@ -6,6 +6,11 @@ from gtts import gTTS
 import random
 
 class NLP:
+    """
+    Class responsible for extracting keywords from text and mapping into
+    appropriate robot controlling functions
+
+    """
     def __init__(self):
 
         self.nlp = spacy.load('en_core_web_sm')
@@ -19,7 +24,10 @@ class NLP:
 
 
     def load_dict(self):
+        """
+            Load datasets from directory
 
+        """
         path = os.path.join(self.path,"match")
         for i in os.listdir(path):
             with open(os.path.join(path,i)) as jsonfile:
@@ -34,6 +42,12 @@ class NLP:
 
 
     def getKeys(self, text):
+
+        """
+        extracting key words from text and calling matcher
+        :param text: string with is gonna be processed
+        :return: none
+        """
         self.text = text.lower()
         doc = self.nlp(self.text)
         self.keywords = []
@@ -48,7 +62,13 @@ class NLP:
         self.check_for_match()
 
     def check_for_match(self):
+        """
+        Match keywords with robot controlling functions
+        :return:
+        """
         s = soundex.getInstance()
+
+        # THIS PART IS GOING TO BE REPLACED WITH SOME SIMPLE CLASSIFYING AI
 
         for word in self.keywords:
             for phrase in self.phrases_match:
@@ -60,22 +80,30 @@ class NLP:
         print(f"Scanned words: {self.keywords}")
         print(f"Found matches: {self.found_matches}")
 
-        if self.found_matches.count("yes_match") >= 1 and self.found_matches.count("no_match") < 1:
-            if self.found_matches.count("welcome_match") < 1:
+        if self.found_matches.count("yes_match") >= 1 \
+                and self.found_matches.count("no_match") < 1 \
+                and self.found_matches.count("welcome_match") < 1:
+
                 tts = gTTS(text=random.choice(self.phrases_response["pour_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
 
-        elif self.found_matches.count("yes_match") < 1 and self.found_matches.count("no_match") < 1:
-            if self.found_matches.count("welcome_match") >= 1:
+                #Call robot siutable functions to pour selected drink
+
+
+        elif self.found_matches.count("yes_match") < 1 \
+                and self.found_matches.count("no_match") < 1 \
+                and self.found_matches.count("welcome_match") >= 1:
                 tts = gTTS(text=random.choice(self.phrases_response["welcome_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
+                # Begin listening to users other commands
 
         else:
             tts = gTTS(text=random.choice(self.phrases_response["repeat_response"]), lang='en')
             tts.save("say_file.mp3")
             os.system("start say_file.mp3")
+            #Ask for repetition
 
 
 
