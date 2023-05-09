@@ -1,0 +1,45 @@
+bin package
+===========
+
+Submodules
+----------
+
+bin.Microphone module
+---------------------
+
+.. automodule:: bin.Microphone
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bin.NLP module
+--------------
+
+.. automodule:: bin.NLP
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bin.Speech2text module
+----------------------
+
+.. automodule:: bin.Speech2text
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+bin.main module
+---------------
+
+.. automodule:: bin.main
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: bin
+   :members:
+   :undoc-members:
+   :show-inheritance:
