@@ -1,15 +1,18 @@
 STREAMING_LIMIT = 240000  # 4 minutes
 SAMPLE_RATE = 16000
 CHUNK_SIZE = int(SAMPLE_RATE / 10)  # 100ms
-import time
-
 import pyaudio
 from six.moves import queue
-
+import time
 
 class ResumableMicrophoneStream:
+    """
+    Class responsible for obtaining chunks of audio and streaming it into google speech-to-text
+    """
+
 
     def __init__(self, rate, chunk_size):
+
 
         self._rate = rate
         self.chunk_size = chunk_size
@@ -40,6 +43,7 @@ class ResumableMicrophoneStream:
         self.closed = False
         return self
 
+
     def __exit__(self, type, value, traceback):
         self._audio_stream.stop_stream()
         self._audio_stream.close()
@@ -51,9 +55,12 @@ class ResumableMicrophoneStream:
 
         self._buff.put(in_data)
         return None, pyaudio.paContinue
-
     def generator(self):
 
+        """
+        Read chunks of audio data from microphone and yields them
+
+        """
         while not self.closed:
             data = []
             if self.new_stream and self.last_audio_input:

@@ -1,3 +1,8 @@
+from __future__ import barry_as_FLUFL
+
+__version__ = "0.1"
+__author__ = "Michal Bryl"
+
 import threading
 
 import NLP
