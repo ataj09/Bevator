@@ -76,8 +76,7 @@ class Speech2text:
                 sys.stdout.write(GREEN)
                 sys.stdout.write("\033[K")
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
-                t = threading.Thread(target = interpreter.getKeys(transcript), args=(transcript,))
-                t.start()
+
 
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
@@ -88,6 +87,9 @@ class Speech2text:
                     sys.stdout.write("Exiting...\n")
                     stream.closed = True
                     break
+
+                t = threading.Thread(target=interpreter.getKeys(transcript), args=(transcript,))
+                t.start()
 
             else:
                 sys.stdout.write(RED)
