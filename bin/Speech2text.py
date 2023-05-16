@@ -24,6 +24,7 @@ class Speech2text:
 
     def __init__(self, nlp):
         self.nlp = nlp
+        self.start_time = 0
 
     def get_current_time(self):
         return int(round(time.time() * 1000))
@@ -90,6 +91,7 @@ class Speech2text:
 
                 t = threading.Thread(target=interpreter.getKeys(transcript), args=(transcript,))
                 t.start()
+                sys.stdout.write(str(result_micros))
 
             else:
                 sys.stdout.write(RED)
@@ -97,6 +99,10 @@ class Speech2text:
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
                 stream.last_transcript_was_final = False
+
+
+
+
 
 
     def Start(self):
@@ -123,6 +129,7 @@ class Speech2text:
         sys.stdout.write('\nListening, say "Quit" or "Exit" to stop.\n\n')
         sys.stdout.write("End (ms)       Transcript Results/Status\n")
         sys.stdout.write("=====================================================\n")
+
 
         with mic_manager as stream:
 

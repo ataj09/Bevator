@@ -25,6 +25,7 @@ class NLP:
         self.found_matches = []
         self.listen_flag = -10
         self.listen_time = 30
+        self.start_say_time = self.get_current_time()
 
     def get_current_time(self):
         return int(round(time.time()))
@@ -83,6 +84,10 @@ class NLP:
         print(f"Scanned words: {self.keywords}")
         print(f"Found matches: {self.found_matches}")
 
+        if self.get_current_time() - self.start_say_time < 5:
+            print("not enough time has passed")
+            return
+
         if self.found_matches.count("yes_match") < 1 \
                 and self.found_matches.count("no_match") < 1 \
                 and self.found_matches.count("welcome_match") >= 1\
@@ -91,6 +96,7 @@ class NLP:
             tts.save("say_file.mp3")
             os.system("start say_file.mp3")
             self.listen_flag = self.get_current_time()
+            self.start_say_time = self.get_current_time()
             return
 
             # Begin listening to users other commands
@@ -105,7 +111,7 @@ class NLP:
                 tts = gTTS(text=random.choice(self.phrases_response["pour_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
-
+                self.start_say_time = self.get_current_time()
                 # Call robot siutable functions to pour selected drink
 
 
@@ -113,6 +119,7 @@ class NLP:
                 tts = gTTS(text=random.choice(self.phrases_response["repeat_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
+                self.start_say_time = self.get_current_time()
                 # Ask for repetition
 
         else:
