@@ -77,6 +77,9 @@ class Speech2text:
                 sys.stdout.write(GREEN)
                 sys.stdout.write("\033[K")
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+                
+                t = threading.Thread(target = interpreter.getKeys, args=(transcript,))
+                t.start()
 
 
                 stream.is_final_end_time = stream.result_end_time
@@ -138,6 +141,7 @@ class Speech2text:
                 sys.stdout.write(
                     "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
                 )
+                
 
                 stream.audio_input = []
                 audio_generator = stream.generator()
