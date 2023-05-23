@@ -24,6 +24,7 @@ class Speech2text:
 
     def __init__(self, nlp):
         self.nlp = nlp
+        self.start_time = 0
 
     def get_current_time(self):
         return int(round(time.time() * 1000))
@@ -76,8 +77,10 @@ class Speech2text:
                 sys.stdout.write(GREEN)
                 sys.stdout.write("\033[K")
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
+                
                 t = threading.Thread(target = interpreter.getKeys, args=(transcript,))
                 t.start()
+
 
                 stream.is_final_end_time = stream.result_end_time
                 stream.last_transcript_was_final = True
@@ -89,12 +92,20 @@ class Speech2text:
                     stream.closed = True
                     break
 
+                t = threading.Thread(target=interpreter.getKeys(transcript), args=(transcript,))
+                t.start()
+                sys.stdout.write(str(result_micros))
+
             else:
                 sys.stdout.write(RED)
                 sys.stdout.write("\033[K")
                 sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
                 stream.last_transcript_was_final = False
+
+
+
+
 
 
     def Start(self):
@@ -122,6 +133,7 @@ class Speech2text:
         sys.stdout.write("End (ms)       Transcript Results/Status\n")
         sys.stdout.write("=====================================================\n")
 
+
         with mic_manager as stream:
 
             while not stream.closed:
@@ -129,6 +141,7 @@ class Speech2text:
                 sys.stdout.write(
                     "\n" + str(STREAMING_LIMIT * stream.restart_counter) + ": NEW REQUEST\n"
                 )
+                
 
                 stream.audio_input = []
                 audio_generator = stream.generator()

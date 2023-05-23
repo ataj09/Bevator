@@ -4,6 +4,8 @@ import os
 import soundex
 from gtts import gTTS
 import random
+import time
+
 
 class NLP:
     """
@@ -11,35 +13,39 @@ class NLP:
     appropriate robot controlling functions
 
     """
+
     def __init__(self):
 
         self.nlp = spacy.load('en_core_web_sm')
         self.text = ""
-        self.path = os.path.join(os.getcwd(),"../data")
+        self.path = os.path.join(os.getcwd(), "../data")
         self.phrases_match = {}
         self.phrases_response = {}
         self.keywords = []
         self.found_matches = []
+        self.listen_flag = -10
+        self.listen_time = 30
+        self.start_say_time = self.get_current_time()
 
-
+    def get_current_time(self):
+        return int(round(time.time()))
 
     def load_dict(self):
         """
             Load datasets from directory
 
         """
-        path = os.path.join(self.path,"match")
+        path = os.path.join(self.path, "match")
         for i in os.listdir(path):
-            with open(os.path.join(path,i)) as jsonfile:
+            with open(os.path.join(path, i)) as jsonfile:
                 temp = json.load(jsonfile)
                 self.phrases_match["".join(temp.keys())] = list(temp.values())[0]
 
         path = os.path.join(self.path, "response")
         for i in os.listdir(path):
-            with open(os.path.join(path,i)) as jsonfile:
+            with open(os.path.join(path, i)) as jsonfile:
                 temp = json.load(jsonfile)
                 self.phrases_response["".join(temp.keys())] = list(temp.values())[0]
-
 
     def getKeys(self, text):
 
@@ -56,8 +62,6 @@ class NLP:
         for token in doc:
             if token.pos_ in ['VERB', 'NOUN', 'ADJ', 'INTJ'] and not token.is_stop:
                 self.keywords.append(token.text)
-
-
 
         self.check_for_match()
 
@@ -80,35 +84,43 @@ class NLP:
         print(f"Scanned words: {self.keywords}")
         print(f"Found matches: {self.found_matches}")
 
-        if self.found_matches.count("yes_match") >= 1 \
+        if self.get_current_time() - self.start_say_time < 5:
+            print("not enough time has passed")
+            return
+
+        if self.found_matches.count("yes_match") < 1 \
                 and self.found_matches.count("no_match") < 1 \
-                and self.found_matches.count("welcome_match") < 1:
+                and self.found_matches.count("welcome_match") >= 1\
+                and self.get_current_time() - self.listen_flag:
+            tts = gTTS(text=random.choice(self.phrases_response["welcome_response"]), lang='en')
+            tts.save("say_file.mp3")
+            os.system("start say_file.mp3")
+            self.listen_flag = self.get_current_time()
+            self.start_say_time = self.get_current_time()
+            return
+
+            # Begin listening to users other commands
+
+        if self.get_current_time() - self.listen_flag < self.listen_time:
+
+            #other reponses will be generated only when "Bevator" was called in last self.listen_time seconds
+            if self.found_matches.count("yes_match") >= 1 \
+                    and self.found_matches.count("no_match") < 1 \
+                    and self.found_matches.count("welcome_match") < 1:
 
                 tts = gTTS(text=random.choice(self.phrases_response["pour_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
+                self.start_say_time = self.get_current_time()
+                # Call robot siutable functions to pour selected drink
 
-                #Call robot siutable functions to pour selected drink
 
-
-        elif self.found_matches.count("yes_match") < 1 \
-                and self.found_matches.count("no_match") < 1 \
-                and self.found_matches.count("welcome_match") >= 1:
-                tts = gTTS(text=random.choice(self.phrases_response["welcome_response"]), lang='en')
+            else:
+                tts = gTTS(text=random.choice(self.phrases_response["repeat_response"]), lang='en')
                 tts.save("say_file.mp3")
                 os.system("start say_file.mp3")
-                # Begin listening to users other commands
+                self.start_say_time = self.get_current_time()
+                # Ask for repetition
 
         else:
-            tts = gTTS(text=random.choice(self.phrases_response["repeat_response"]), lang='en')
-            tts.save("say_file.mp3")
-            os.system("start say_file.mp3")
-            #Ask for repetition
-
-
-
-
-
-
-
-
+            pass
