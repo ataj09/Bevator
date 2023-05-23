@@ -52,7 +52,7 @@ class Motor:
         """
         Main loop
 
-        Works according to _motor_mode and _puring_mode variables
+        Works according to _motor_mode and _pouring_mode variables
 
         For _motor_mode equal:
         1: elevator goes up
@@ -93,7 +93,7 @@ class Motor:
 
 
 
-    def elevator_down(self):
+    def elevator_down(self) -> None:
         """
         Turns elevator to go down
         """
@@ -118,7 +118,7 @@ class Motor:
         self.pi.write(self.pwm_pin, 0)
 
 
-    async def elevator_begin(self):
+    async def elevator_begin(self) -> int:
         """
         Starts pouring sequent
         :return: 0 if pouring begins 1 if machine is occupied 2 if there is no glass found
@@ -135,7 +135,7 @@ class Motor:
 
         return 0
 
-    def select_pump(self, selected_pump):
+    async def select_pump(self, selected_pump: int):
         """
         Sets elevator mode to desired one (-1 for going down, 0 for staying and 1 for going up)
         :param selected_pump: sets pump to be used in pouring
@@ -143,14 +143,14 @@ class Motor:
         self.selected_pump = selected_pump
 
 
-    def set_motor_mode(self, mode):
+    def set_motor_mode(self, mode: int):
         """
         Sets elevator mode to desired one (-1 for going down, 0 for staying and 1 for going up)
         :param mode: new mode of elevator
         """
         self.motor_mode = mode
 
-    def get_current_time(self):
+    def get_current_time(self) -> int:
         """
         :return: current time in milliseconds
         """

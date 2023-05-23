@@ -14,7 +14,7 @@ class NLP:
 
     """
 
-    def __init__(self):
+    def __init__(self, motor):
 
         self.nlp = spacy.load('en_core_web_sm')
         self.text = ""
@@ -26,6 +26,7 @@ class NLP:
         self.listen_flag = -10
         self.listen_time = 30
         self.start_say_time = self.get_current_time()
+        self.motor = motor
 
     def get_current_time(self):
         return int(round(time.time()))

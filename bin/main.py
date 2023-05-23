@@ -11,14 +11,19 @@ def main():
     2: Start listening to microphone on new thread
     3: Start robot control on new thread
     """
-    nlp = NLP.NLP()
+
+
+    robot_system = motor.Motor()
+    t2 = threading.Thread(target=robot_system.start)
+    t2.start()
+
+    nlp = NLP.NLP(motor)
     nlp.load_dict()
+
     s2t = Speech2text.Speech2text(nlp)
     t1 = threading.Thread(target= s2t.Start)
     t1.start()
-    robot_system = motor.Motor()
-    t2 = threading.Thread(target= robot_system.start)
-    t2.start()
+
 
 
 if __name__ == "__main__":

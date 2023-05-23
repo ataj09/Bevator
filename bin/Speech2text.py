@@ -23,10 +23,18 @@ YELLOW = "\033[0;33m"
 class Speech2text:
 
     def __init__(self, nlp):
+        """
+        Constructor
+        :param nlp: object of NLP class
+        """
         self.nlp = nlp
         self.start_time = 0
 
+
     def get_current_time(self):
+        """
+        :return: current time in milliseconds
+        """
         return int(round(time.time() * 1000))
 
 
